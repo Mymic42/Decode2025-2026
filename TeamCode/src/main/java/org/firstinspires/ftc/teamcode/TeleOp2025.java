@@ -3,37 +3,31 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-//import org.firstinspires.ftc.teamcode.Intake;
+import org.firstinspires.ftc.teamcode.Intake;
 
 @TeleOp(name = "Alpha", group = "competition")
 public class TeleOp2025 extends OpMode {
     DriveTrain drive;
-    // Arm arm;
-    // Slide slide;
-    // ArmServo1 armServo1;
-    // Claw claw1;
-    // Claw claw2;
+//    Intake intake;
+//    Arm arm;
+//    Slide slide;
+//    ArmServo1 armServo1;
+    Claw PTOtoggle1;
+//    Turner greenSwitch;
+//    Turner purpleSwitch;
+//    Turner fullRotator1;
+//    Turner fullRotator2;
     // Claw claw3;
     // Claw claw4;
 //    Claw claw5;
 
-    //Intake intake;
-
-    // int loopNum = 0;
-    // int loopHold0 = -1;
-    // int loopHold1 = -1;
-    // int loopHold2 = -1;
-    // int loopHold3 = -1;
-    // int loopHold4 = -1;
-    // int loopHold5 = -1;
-    // int loopHold6 = -1;
-    // int loopHold7 = -1;
     boolean doneInit = false;
 
+    boolean intakeOn = false;
     // boolean pastBack = false;
     // boolean currentBack;
-    // boolean pastA = false;
-    // boolean currentA;
+     boolean pastA = false;
+     boolean currentA;
     // boolean pastY = false;
     // boolean currentY;
     // boolean pastX = false;
@@ -43,8 +37,8 @@ public class TeleOp2025 extends OpMode {
     // boolean pastB2 = false;
     // boolean currentB2;
 
-    // boolean pastD_Up = false;
-    // boolean currentD_Up;
+     boolean pastD_Up = false;
+     boolean currentD_Up;
     // boolean pastD_Down = false;
     // boolean currentD_Down;
     // boolean pastD_Right = false;
@@ -52,11 +46,12 @@ public class TeleOp2025 extends OpMode {
     boolean halfSpeed = false;
     double multiplier;
 
-    // boolean pastTriggered = false;
-    // boolean currentRightTrigger = false;
-    // boolean currentLeftTrigger = false;
-    // double rightTriggerValue = 0;
-    // double leftTriggerValue = 0;
+     boolean pastRightTriggered = false;
+//    boolean pastLeftTriggered = false;
+     boolean currentRightTrigger = false;
+     boolean currentLeftTrigger = false;
+     double rightTriggerValue = 0;
+     double leftTriggerValue = 0;
     // boolean pastBumpered = false;
     // boolean currentRightBumper = false;
     // boolean currentLeftBumper = false;
@@ -64,13 +59,17 @@ public class TeleOp2025 extends OpMode {
     // boolean leftBumperValue = false;
 
 //    boolean pastServo1ed = false;
+    boolean greenActive = false;
+    int greenNum = 0;
+    boolean purpleActive = false;
+    int purpleNum = 0;
 
     // boolean holdArm = false;
 
     @Override
     public void start() {
         while(!doneInit){}
-        // claw1.open(); //vertical flip
+        PTOtoggle1.open(); //vertical flip
         // claw2.open(); // horizontal flip
         // claw3.close(); //
         // claw4.open();
@@ -85,10 +84,16 @@ public class TeleOp2025 extends OpMode {
     @Override
     public void init() {
         drive = new DriveTrain(hardwareMap, "fl", "fr", "bl", "br");
+//        intake = new Intake(hardwareMap, "intake");
+        PTOtoggle1 = new Claw(hardwareMap, "PTO1", 0.68, 1);
+//        greenSwitch = new Turner(hardwareMap, "green");
+//        purpleSwitch = new Turner(hardwareMap, "purple");
+//        fullRotator1 = new Turner(hardwareMap, "rot1");
+//        fullRotator2 = new Turner(hardwareMap, "rot2");
+
         // arm = new Arm(hardwareMap, "am1", 10, 1100, 0.05);
 //        slide = new Slide(hardwareMap, "am2", 10, 1100, 0.05);
         // armServo1 = new ArmServo1(hardwareMap, "claw5", 0, 1000);
-//         claw1 = new Claw(hardwareMap, "claw1", 0.8, 1,0);
 //         claw1 = new Claw(hardwareMap, "claw1", 0,0.43,0.05);
 //         claw2 = new Claw(hardwareMap, "claw2", 0.78,0,0.25);
 //         claw3 = new Claw(hardwareMap, "claw3", 0.65, 0.85,0);
@@ -116,17 +121,99 @@ public class TeleOp2025 extends OpMode {
         telemetry.addData("half speed", halfSpeed);
 
         drive.setPowersToZero();
-        drive.calculatePower(new double[] {multiplier * gamepad1.left_stick_x, -multiplier * gamepad1.left_stick_y, multiplier * gamepad1.right_stick_x});
+        drive.calculatePower(new double[] {multiplier * gamepad1.left_stick_x, multiplier * gamepad1.left_stick_y, multiplier * -gamepad1.right_stick_x});
         drive.normalizePowers();
         drive.pushPowers();
 //
+//
+//        currentD_Up = gamepad1.dpad_up;
+//        if (currentD_Up && !pastD_Up) {
+//            // Toggle intake state
+//            intakeOn = !intakeOn;
+//        }
+//        if (intakeOn) {
+//            intake.movePower(true);
+//            telemetry.addData("Intake", "ON");
+//        } else {
+//            intake.stop();
+//            telemetry.addData("Intake", "OFF");
+//        }
+//        pastD_Up = currentD_Up;
+
+        currentA = gamepad1.a;
+        if(currentA && !pastA) {
+            PTOtoggle1.toggle();
+        }
+        pastA = currentA;
+
+//        if (detects green) {
+//            greenActive = true;
+//            greenNum = 0;
+//        } else if (detects purple) {
+//            purpleActive = true;
+//            purpleNum = 0;
+//        }
+//        if(greenActive) {
+//            if(greenNum < 300) {
+//                greenNum++;
+//                greenSwitch.movePower(true);
+//            } else {
+//                greenSwitch.stop();
+//                greenActive = false;
+//            }
+//        }
+//        if (purpleActive) {
+//            if (purpleNum < 300) {
+//                purpleNum++;
+//                purpleSwitch.movePower(false);
+//            } else {
+//                purpleSwitch.stop();
+//                purpleActive = false;
+//            }
+//        }
+
+//
+//         rightTriggerValue = gamepad1.right_trigger;
+//
+//         if(rightTriggerValue > 0.5) {
+//             currentRightTrigger = true;
+//         } else {
+//             currentRightTrigger = false;
+//         }
+//         if(currentRightTrigger && !pastRightTriggered) {
+//            fullRotator1.movePower(true);
+//         } else {
+//             fullRotator1.stop();
+//         }
+
+//
+//         leftTriggerValue = gamepad1.left_trigger;
+//
+//         if(leftTriggerValue > 0.5) {
+//             currentLeftTrigger = true;
+//         }
+//         if(currentLeftTrigger && !pastLeftTriggered) {
+//             fullRotator2.movePower(false);
+//         }
+//
+
+
+
+
+
+
+
+
+
+//
+//
 //        currentD_Up = gamepad1.dpad_up;
 //        if(currentD_Up && !pastD_Up) {
-//            slide.movePower(true);
-//            telemetry.addData("D", slide);
+//            greenSwitch.movePower(true);
+//            telemetry.addData("D", greenSwitch);
 //        }else{
-//            slide.stop();
-//            telemetry.addData("STOP", slide);
+//            greenSwitch.movePower(true);
+//            telemetry.addData("STOP", greenSwitch);
 //        }
 //        pastD_Up = currentD_Up;
 //
@@ -152,11 +239,7 @@ public class TeleOp2025 extends OpMode {
 //        }
 //        pastD_Right = currentD_Right;
 //
-//        currentA = gamepad1.a;
-//        if(currentA && !pastA) {
-//            claw.toggle();
-//        }
-//        pastA = currentA;
+//
 //
 //
 //         currentD_Right = gamepad2.dpad_right;
@@ -177,36 +260,6 @@ public class TeleOp2025 extends OpMode {
 //         }
 //         pastD_Right = currentD_Right;
 //
-
-
-        // rightTriggerValue = gamepad2.right_trigger;
-        // leftTriggerValue = gamepad2.left_trigger;
-        // if(rightTriggerValue > 0.5) {
-        //     currentRightTrigger = true;
-
-        // }
-        // else if(leftTriggerValue > 0.5) {
-        //     currentLeftTrigger = true;
-
-        // }
-
-        // if(currentRightTrigger) {
-        //     arm.movePower(true);
-        // }
-        // else if(currentLeftTrigger) {
-        //     arm.movePower(false);
-
-        // }
-
-        // if(!(currentLeftTrigger || currentRightTrigger)) {
-        //     if(!pastTriggered) {
-        //         arm.stop();
-        //     }
-        // }
-
-        // pastTriggered = currentRightTrigger || currentLeftTrigger;
-        // currentRightTrigger = false;
-        // currentLeftTrigger = false;
 
 
         // rightBumperValue = gamepad2.right_bumper;
@@ -303,31 +356,8 @@ public class TeleOp2025 extends OpMode {
         // pastA = currentA;
 
 
-        // if(loopHold0 == loopNum) {
-
-        //     loopHold0=-1;
-        // }
-        // if(loopHold1 == loopNum) {
-
-        //     loopHold1=-1;
-        // }
-        // if(loopHold2 == loopNum) {
-        //     loopHold2=-1;
-        // }
-        // if(loopHold3 == loopNum) {
-
-        //     loopHold3=-1;
-        // }
-        // if(loopHold4 == loopNum) {
-        //     loopHold4=-1;
-        // }
-        // if(loopHold5 == loopNum) {
-        //     loopHold5=-1;
-        // }
-
         // telemetry.addData("arm Position", arm.getCurrentPosition());
         // telemetry.addData("arm 2 Position", armServo1.getCurrentPosition());
-        // loopNum++;
         // telemetry.update();
     }
 
@@ -336,6 +366,7 @@ public class TeleOp2025 extends OpMode {
         drive.stop();
         // arm.stop();
 //        slide.stop();
-        //intake.setState("off");
+//        intake.setState("off");
+//        intake.stop();
     }
 }

@@ -96,7 +96,7 @@ public class DriveTrain {
     }
 
     public void pushPowers() {
-        frontLeftMotor.setPower(frontLeftPower);
+        frontLeftMotor.setPower(-frontLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
@@ -126,5 +126,20 @@ public class DriveTrain {
         change[3] = backRightMotor.getCurrentPosition() - brTickZero;
 
         return change;
+    }
+
+    public DcMotor getFrontLeftMotor() {
+        return frontLeftMotor;
+    }
+
+    public DcMotor getFrontRightMotor() {
+        return frontRightMotor;
+    }
+
+    public DcMotor getBackLeftMotor() {
+        return backLeftMotor;
+    }
+    public DcMotor getBackRightMotor() {
+        return backRightMotor;
     }
 }
